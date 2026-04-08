@@ -1,655 +1,141 @@
 <!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Intelligenze in dialogo — Planner Formativo</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Planner PNRR — Intelligenze in dialogo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-:root {
-  --green-dark: #1B6D3F;
-  --green-mid: #2A8B57;
-  --green-light: #3DA06A;
-  --green-pale: #E8F5E9;
-  --green-bg: #F1F8F2;
-  --amber: #F57F17;
-  --amber-light: #FFF8E1;
-  --blue: #1565C0;
-  --blue-light: #E3F2FD;
-  --red: #C62828;
-  --red-light: #FFEBEE;
-  --gray-900: #1a1a1a;
-  --gray-700: #444;
-  --gray-500: #888;
-  --gray-300: #ccc;
-  --gray-100: #f5f5f5;
-  --white: #fff;
-  --radius: 8px;
-  --shadow: 0 2px 12px rgba(27,109,63,.12);
-  --shadow-lg: 0 8px 32px rgba(27,109,63,.18);
-  --font: 'DM Sans', sans-serif;
-  --font-display: 'DM Serif Display', serif;
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: var(--font); background: var(--gray-100); color: var(--gray-900); min-height:100vh; }
-
-/* ===== LOGIN ===== */
-#login-screen {
-  display:flex; align-items:center; justify-content:center; min-height:100vh;
-  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 50%, var(--green-light) 100%);
-}
-.login-card {
-  background: var(--white); border-radius: 16px; padding: 48px 40px; width: 380px;
-  box-shadow: var(--shadow-lg); text-align:center;
-}
-.login-card h1 { font-family: var(--font-display); font-size: 24px; color: var(--green-dark); margin-bottom: 4px; }
-.login-card .subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
-.login-card input {
-  width:100%; padding: 12px 16px; border: 2px solid var(--gray-300); border-radius: var(--radius);
-  font-family: var(--font); font-size: 15px; outline:none; transition: border-color .2s;
-}
-.login-card input:focus { border-color: var(--green-mid); }
-.login-card .btn-login {
-  width:100%; margin-top:16px; padding:12px; border:none; border-radius: var(--radius);
-  background: var(--green-dark); color: var(--white); font-family: var(--font); font-weight:700;
-  font-size:15px; cursor:pointer; transition: background .2s;
-}
-.login-card .btn-login:hover { background: var(--green-mid); }
-.login-error { color: var(--red); font-size:13px; margin-top:8px; display:none; }
-
-/* ===== APP ===== */
-#app { display:none; }
-
-/* NAV */
-.topbar {
-  background: var(--green-dark); color: var(--white); padding: 0 24px; height: 56px;
-  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100;
-}
-.topbar h1 { font-family: var(--font-display); font-size: 18px; font-weight:400; }
-.topbar-right { display:flex; gap:8px; align-items:center; }
-.tab-btn {
-  padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.3);
-  background:transparent; color: var(--white); font-family: var(--font); font-size:13px;
-  font-weight:500; cursor:pointer; transition: all .2s;
-}
-.tab-btn:hover, .tab-btn.active { background: rgba(255,255,255,.15); border-color: var(--white); }
-
-/* COUNTERS */
-.counters {
-  display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;
-  padding: 20px 24px; background: var(--white); border-bottom: 1px solid var(--gray-300);
-}
-.counter-card {
-  padding: 16px; border-radius: var(--radius); border-left: 4px solid var(--green-dark);
-  background: var(--green-bg);
-}
-.counter-card.warn { border-left-color: var(--amber); background: var(--amber-light); }
-.counter-card .label { font-size: 11px; text-transform:uppercase; letter-spacing:.5px; color: var(--gray-500); font-weight:700; }
-.counter-card .value { font-size: 28px; font-weight:700; color: var(--green-dark); margin-top:2px; }
-.counter-card.warn .value { color: var(--amber); }
-.counter-card .detail { font-size: 12px; color: var(--gray-500); margin-top:2px; }
-
-/* CALENDAR */
-.calendar-section { padding: 20px 24px; }
-.month-title {
-  font-family: var(--font-display); font-size: 20px; color: var(--green-dark);
-  margin-bottom:12px; padding-bottom:8px; border-bottom: 2px solid var(--green-pale);
-}
-.cal-grid {
-  display:grid; grid-template-columns: repeat(7, 1fr); gap:4px; margin-bottom:24px;
-}
-.cal-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
-  color: var(--gray-500); text-align:center; padding:8px 4px; }
-.cal-day {
-  min-height: 90px; background: var(--white); border-radius: 6px; padding: 6px;
-  border: 1px solid var(--gray-300); cursor:pointer; transition: all .15s; position:relative;
-}
-.cal-day:hover { border-color: var(--green-mid); box-shadow: var(--shadow); }
-.cal-day.empty { background: transparent; border-color: transparent; cursor:default; }
-.cal-day.empty:hover { box-shadow:none; }
-.cal-day.weekend { background: var(--gray-100); }
-.cal-day .day-num { font-size:12px; font-weight:700; color: var(--gray-700); }
-.cal-day .day-name { font-size:9px; color: var(--gray-500); }
-.cal-day.has-slot { border-color: var(--green-mid); background: var(--green-pale); }
-
-.slot-badge {
-  margin-top:4px; padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight:700;
-  line-height:1.2; display:block;
-}
-.slot-badge.lab { background: var(--blue); color: var(--white); }
-.slot-badge.form { background: var(--green-dark); color: var(--white); }
-.slot-badge .slot-hours { font-weight:400; opacity:.8; }
-
-/* MODAL */
-.modal-overlay {
-  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center;
-}
-.modal-overlay.show { display:flex; }
-.modal {
-  background: var(--white); border-radius: 12px; width: 440px; max-width:90vw;
-  max-height:90vh; overflow-y:auto; box-shadow: var(--shadow-lg);
-}
-.modal-header {
-  padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-300);
-  display:flex; justify-content:space-between; align-items:center;
-}
-.modal-header h2 { font-size:16px; color: var(--green-dark); }
-.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color: var(--gray-500); padding:4px; }
-.modal-body { padding: 20px 24px; }
-.modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-300); display:flex; gap:8px; justify-content:flex-end; }
-
-.form-group { margin-bottom: 14px; }
-.form-group label { display:block; font-size:12px; font-weight:700; color: var(--gray-700); margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-.form-group select, .form-group input {
-  width:100%; padding:10px 12px; border:1.5px solid var(--gray-300); border-radius:6px;
-  font-family: var(--font); font-size:14px; outline:none; transition: border-color .2s;
-}
-.form-group select:focus, .form-group input:focus { border-color: var(--green-mid); }
-
-.btn {
-  padding: 10px 20px; border-radius: 6px; font-family: var(--font); font-weight:700;
-  font-size:13px; cursor:pointer; border:none; transition: all .2s;
-}
-.btn-primary { background: var(--green-dark); color: var(--white); }
-.btn-primary:hover { background: var(--green-mid); }
-.btn-danger { background: var(--red); color: var(--white); }
-.btn-danger:hover { background: #b71c1c; }
-.btn-ghost { background:transparent; color: var(--gray-500); border:1.5px solid var(--gray-300); }
-.btn-ghost:hover { border-color: var(--gray-700); color: var(--gray-700); }
-
-/* BANDO VIEWER */
-.bando-section { padding:20px 24px; }
-.bando-frame { width:100%; height: calc(100vh - 140px); border:none; border-radius: var(--radius); box-shadow: var(--shadow); }
-
-/* RIEPILOGO */
-.riepilogo-section { padding: 20px 24px; }
-.slot-list { display:flex; flex-direction:column; gap:8px; }
-.slot-item {
-  display:grid; grid-template-columns: 100px 120px 1fr 60px 60px; gap:12px; align-items:center;
-  padding: 12px 16px; background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-300);
-  font-size:13px;
-}
-.slot-item .type-badge { padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; color: var(--white); text-align:center; }
-.slot-item .type-badge.lab { background: var(--blue); }
-.slot-item .type-badge.form { background: var(--green-dark); }
-.slot-item .hours { font-weight:700; color: var(--green-dark); }
-.slot-item .delete-btn { background:none; border:none; color: var(--gray-500); cursor:pointer; font-size:16px; }
-.slot-item .delete-btn:hover { color: var(--red); }
-
-.progress-bar-container { margin: 16px 0; }
-.progress-label { display:flex; justify-content:space-between; font-size:12px; color: var(--gray-500); margin-bottom:4px; }
-.progress-bar { height:8px; background: var(--gray-300); border-radius:4px; overflow:hidden; }
-.progress-fill { height:100%; border-radius:4px; transition: width .3s; }
-.progress-fill.perc { background: var(--green-dark); }
-.progress-fill.lab { background: var(--blue); }
-
-@media (max-width:768px) {
-  .cal-grid { grid-template-columns: repeat(7, 1fr); gap:2px; }
-  .cal-day { min-height:60px; padding:3px; }
-  .cal-day .day-num { font-size:10px; }
-  .slot-badge { font-size:7px; padding:2px 3px; }
-  .counters { grid-template-columns: repeat(2, 1fr); }
-  .slot-item { grid-template-columns: 1fr; }
-  .topbar h1 { font-size:14px; }
-}
-</style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <h1>Intelligenze in dialogo</h1>
-    <p class="subtitle">Planner formativo PNRR — A.S. 2026/2027</p>
-    <input type="password" id="pwd-input" placeholder="Password di accesso" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="btn-login" onclick="doLogin()">Accedi</button>
-    <p class="login-error" id="login-err">Password non corretta</p>
-  </div>
-</div>
-
-<!-- APP -->
+:root{--gd:#1B6D3F;--gm:#2A8B57;--gp:#E8F5E9;--gbg:#F1F8F2;--bl:#1565C0;--bll:#E3F2FD;--am:#F57F17;--all:#FFF8E1;--rd:#C62828;--rll:#FFEBEE;--g9:#1a1a1a;--g7:#444;--g5:#888;--g3:#ccc;--g1:#f5f5f5;--w:#fff;--r:8px;--f:'DM Sans',sans-serif;--fd:'DM Serif Display',serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--f);background:var(--g1);color:var(--g9)}
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--gd),var(--gm))}
+.lc{background:var(--w);border-radius:16px;padding:44px 36px;width:360px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.lc h1{font-family:var(--fd);font-size:22px;color:var(--gd)}.lc .su{font-size:12px;color:var(--g5);margin-bottom:24px}
+.lc input{width:100%;padding:11px 14px;border:2px solid var(--g3);border-radius:var(--r);font-family:var(--f);font-size:14px;outline:none}
+.lc input:focus{border-color:var(--gm)}.lc .lb{width:100%;margin-top:14px;padding:11px;border:none;border-radius:var(--r);background:var(--gd);color:var(--w);font-weight:700;font-size:14px;cursor:pointer}
+.lerr{color:var(--rd);font-size:12px;margin-top:6px;display:none}
+#app{display:none}
+.top{background:var(--gd);color:var(--w);padding:0 16px;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.top h1{font-family:var(--fd);font-size:15px}.top-r{display:flex;gap:5px}.tb{padding:4px 11px;border-radius:16px;border:1.5px solid rgba(255,255,255,.3);background:0;color:var(--w);font-family:var(--f);font-size:11px;font-weight:600;cursor:pointer}.tb:hover,.tb.on{background:rgba(255,255,255,.15);border-color:var(--w)}
+.bar{display:flex;gap:6px;padding:10px 16px;background:var(--w);border-bottom:1px solid var(--g3);flex-wrap:wrap;align-items:center}
+.bar label{font-size:10px;font-weight:700;color:var(--g5);text-transform:uppercase;letter-spacing:.3px}
+.bar select{padding:3px 6px;border:1.5px solid var(--g3);border-radius:5px;font-family:var(--f);font-size:11px}
+.ft{padding:3px 9px;border-radius:12px;border:1.5px solid var(--g3);background:var(--w);font-family:var(--f);font-size:10px;font-weight:700;cursor:pointer}
+.ft.a{background:var(--gd);color:var(--w);border-color:var(--gd)}.ft.ab{background:var(--bl);color:var(--w);border-color:var(--bl)}.ft.aa{background:var(--am);color:var(--w);border-color:var(--am)}
+.ct{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:10px 16px;background:var(--w);border-bottom:1px solid var(--g3)}
+.cx{padding:10px;border-radius:var(--r);border-left:3px solid var(--gd);background:var(--gbg)}.cx.w{border-left-color:var(--am);background:var(--all)}
+.cx .cl{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--g5);font-weight:700}.cx .cv{font-size:20px;font-weight:700;color:var(--gd)}.cx.w .cv{color:var(--am)}.cx .cd{font-size:10px;color:var(--g5)}
+.cal{padding:12px 16px}.mti{font-family:var(--fd);font-size:16px;color:var(--gd);margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid var(--gp)}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:16px}.ch{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--g5);text-align:center;padding:4px 0}
+.dy{min-height:72px;background:var(--w);border-radius:4px;padding:3px;border:1px solid var(--g3);cursor:pointer;overflow:hidden;transition:all .12s}
+.dy:hover{border-color:var(--gm);box-shadow:0 2px 8px rgba(27,109,63,.1)}.dy.em{background:0;border-color:transparent;cursor:default;min-height:auto}.dy.em:hover{box-shadow:none}
+.dy.we{background:#f7f7f7}.dy.fe{background:var(--rll)}.dy.hs{border-color:var(--gm);background:var(--gp)}
+.dy .dn{font-size:10px;font-weight:700;color:var(--g7)}.dy .dw{font-size:7px;color:var(--g5)}
+.sg{margin-top:2px;padding:1px 3px;border-radius:2px;font-size:7px;font-weight:700;line-height:1.2;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--w)}
+.sg.la{background:var(--bl)}.sg.fo{background:var(--gd)}.sg.vi{background:var(--am)}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}.ov.sh{display:flex}
+.ml{background:var(--w);border-radius:12px;width:460px;max-width:92vw;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.ml-h{padding:14px 18px;border-bottom:1px solid var(--g3);display:flex;justify-content:space-between;align-items:center}.ml-h h2{font-size:14px;color:var(--gd)}
+.ml-x{background:0;border:0;font-size:18px;cursor:pointer;color:var(--g5)}.ml-b{padding:14px 18px}.ml-f{padding:10px 18px;border-top:1px solid var(--g3);display:flex;gap:5px;justify-content:flex-end}
+.fg{margin-bottom:8px}.fg label{display:block;font-size:10px;font-weight:700;color:var(--g7);margin-bottom:2px;text-transform:uppercase;letter-spacing:.2px}
+.fg select,.fg input{width:100%;padding:7px 9px;border:1.5px solid var(--g3);border-radius:5px;font-family:var(--f);font-size:12px;outline:0}.fg select:focus,.fg input:focus{border-color:var(--gm)}
+.bt{padding:7px 14px;border-radius:5px;font-family:var(--f);font-weight:700;font-size:11px;cursor:pointer;border:0}.bt-p{background:var(--gd);color:var(--w)}.bt-d{background:var(--rd);color:var(--w)}.bt-g{background:0;color:var(--g5);border:1.5px solid var(--g3)}
+.tc{display:flex;gap:3px;margin-bottom:8px}.tcb{flex:1;padding:8px;border:2px solid var(--g3);border-radius:var(--r);background:var(--w);font-family:var(--f);font-size:11px;font-weight:700;cursor:pointer;text-align:center}
+.tcb:hover{border-color:var(--gm)}.tcb.sf{border-color:var(--gd);background:var(--gp);color:var(--gd)}.tcb.sl{border-color:var(--bl);background:var(--bll);color:var(--bl)}.tcb.sv{border-color:var(--am);background:var(--all);color:var(--am)}
+.es{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:4px;margin-bottom:3px;font-size:11px}
+.es.lb{background:var(--bll)}.es.fb{background:var(--gp)}.es.vb{background:var(--all)}
+.bnd{padding:16px}.bnd iframe{width:100%;height:calc(100vh - 130px);border:0;border-radius:var(--r)}
+.rp{padding:12px 16px}.plb{display:flex;justify-content:space-between;font-size:10px;color:var(--g5)}.pb{height:5px;background:var(--g3);border-radius:3px;overflow:hidden;margin:3px 0 10px}.pf{height:100%;border-radius:3px}.pf.g{background:var(--gd)}.pf.b{background:var(--bl)}
+.ld{text-align:center;padding:40px;color:var(--g5);font-size:13px}
+@media(max-width:768px){.cg{gap:1px}.dy{min-height:50px;padding:2px}.dy .dn{font-size:8px}.sg{font-size:6px}.ct{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div id="login"><div class="lc"><h1>Intelligenze in dialogo</h1><p class="su">Planner PNRR 2026/2027</p><input type="password" id="pwd" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"><button class="lb" onclick="doLogin()">Accedi</button><p class="lerr" id="lerr">Password errata</p></div></div>
 <div id="app">
-  <div class="topbar">
-    <h1>Intelligenze in dialogo</h1>
-    <div class="topbar-right">
-      <button class="tab-btn active" onclick="showTab('calendar')">Calendario</button>
-      <button class="tab-btn" onclick="showTab('riepilogo')">Riepilogo</button>
-      <button class="tab-btn" onclick="showTab('bando')">Bando PDF</button>
-    </div>
-  </div>
-
-  <!-- COUNTERS -->
-  <div class="counters" id="counters"></div>
-
-  <!-- CALENDAR TAB -->
-  <div id="tab-calendar" class="calendar-section"></div>
-
-  <!-- RIEPILOGO TAB -->
-  <div id="tab-riepilogo" class="riepilogo-section" style="display:none"></div>
-
-  <!-- BANDO TAB -->
-  <div id="tab-bando" class="bando-section" style="display:none">
-    <iframe class="bando-frame" id="bando-iframe" src=""></iframe>
-  </div>
+<div class="top"><h1>Intelligenze in dialogo</h1><div class="top-r"><button class="tb on" onclick="showTab('calendar',this)">Calendario</button><button class="tb" onclick="showTab('riep',this)">Riepilogo</button><button class="tb" onclick="showTab('bando',this)">Bando</button></div></div>
+<div class="bar" id="bar"><label>Mostra:</label><button class="ft a" id="ff" onclick="tgF('frm')">Formazione</button><button class="ft ab" id="fl" onclick="tgF('lab')">Laboratori</button><button class="ft aa" id="fv" onclick="tgF('vnc')">Vincoli</button><label style="margin-left:10px">Sede:</label><select id="fs" onchange="render()"><option value="all">Tutte</option><option value="OZ">Orzinuovi</option><option value="MT">Martinengo</option></select></div>
+<div class="ct" id="ctr"></div>
+<div id="tc" class="cal"></div>
+<div id="tr" class="rp" style="display:none"></div>
+<div id="tb" class="bnd" style="display:none"><iframe id="bif"></iframe></div>
 </div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="modal-title">Aggiungi attivita</h2>
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-    </div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-footer" id="modal-footer"></div>
-  </div>
-</div>
-
+<div class="ov" id="ov" onclick="if(event.target===this)cMo()"><div class="ml"><div class="ml-h"><h2 id="mt"></h2><button class="ml-x" onclick="cMo()">&times;</button></div><div class="ml-b" id="mb"></div><div class="ml-f" id="mf"></div></div></div>
 <script>
-// ===== CONFIG =====
-const PASSWORD_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // SHA-256 of "Forma2026" - we'll use simple check
-const BANDO_PDF_URL = 'Progetto.pdf'; // Place bando PDF in same folder on Neocities
+const U="https://script.google.com/macros/s/AKfycbwzr325G0oT0IUGvgVeTcPAx-JV4iH1LQQlZ7IBYkf2WXXS2xwBy7BDkkWlDMGnODmY/exec";
+const HP=108,HL=144,HT=252,TGT=50;
+const ED=['P-A1','P-A2','P-A3','P-A4','P-A5','P-A6','L-B1','L-B2','L-B3','L-B4','L-B5','L-B6'];
+const MOD=['Presenza','Online sincrono','Mista'];
+const VT=['Collegio docenti','Consiglio di classe','Consiglio interclasse','Scrutini','Ricevimento genitori','Uscita didattica','Assemblea/Riunione','Festa/Evento','Altro impegno'];
+const AMB=['Pri. OZ','Sec. OZ','Pri. MT','Sec. MT','Generale'];
+const INS=['Cerioli','Prof.ssa Ferraboschi'];
+const GH=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+const GN=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+const MN=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const FE={'2026-06-02':'Festa Repubblica','2026-08-15':'Ferragosto','2026-11-01':'Ognissanti','2026-12-08':'Immacolata'};
 
-const BUDGET_TOTAL = 48182.40;
-const HOURS_PERCORSI_TOTAL = 108; // 18h x 6 edizioni
-const HOURS_LAB_TOTAL = 144; // 24h x 6 edizioni
-const HOURS_TOTAL = HOURS_PERCORSI_TOTAL + HOURS_LAB_TOTAL;
-const ATTESTATI_TARGET = 50;
-const EDIZIONI_PERCORSI = 6;
-const EDIZIONI_LAB = 6;
+let slots=[];
+let flt={frm:true,lab:true,vnc:true};
+let loading=true;
 
-// ===== STATE =====
-let slots = JSON.parse(localStorage.getItem('pnrr_slots') || '[]');
+function doLogin(){if(document.getElementById('pwd').value==='Forma2026'){document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';sessionStorage.setItem('pa','1');loadData()}else{let e=document.getElementById('lerr');e.style.display='block';setTimeout(()=>e.style.display='none',2000)}}
+if(sessionStorage.getItem('pa')==='1'){document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';setTimeout(loadData,50)}
 
-// ===== LOGIN =====
-function doLogin() {
-  const pwd = document.getElementById('pwd-input').value;
-  if (pwd === 'Forma2026') {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    sessionStorage.setItem('pnrr_auth','1');
-    renderAll();
-  } else {
-    const err = document.getElementById('login-err');
-    err.style.display = 'block';
-    setTimeout(() => err.style.display = 'none', 2000);
-  }
-}
-if (sessionStorage.getItem('pnrr_auth') === '1') {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  setTimeout(renderAll, 50);
-}
+function loadData(){loading=true;document.getElementById('tc').innerHTML='<div class="ld">Caricamento dati...</div>';
+let s=document.createElement('script');s.src=U+'?action=get_all&callback=onData&_='+Date.now();s.onerror=function(){loading=false;slots=JSON.parse(localStorage.getItem('pnrr3')||'[]');render()};document.body.appendChild(s)}
 
-// ===== TABS =====
-function showTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('tab-calendar').style.display = tab === 'calendar' ? 'block' : 'none';
-  document.getElementById('tab-riepilogo').style.display = tab === 'riepilogo' ? 'block' : 'none';
-  document.getElementById('tab-bando').style.display = tab === 'bando' ? 'block' : 'none';
-  if (tab === 'bando') {
-    document.getElementById('bando-iframe').src = BANDO_PDF_URL;
-  }
-  if (tab === 'riepilogo') renderRiepilogo();
-}
+window.onData=function(r){loading=false;if(r.status==='ok'&&r.data){slots=r.data.map(d=>({id:d.id,date:d.data,cat:d.cat,sub:d.sub,sede:d.sede,mod:d.mod,hours:Number(d.ore)||0,ed:d.ed,ndoc:d.ndoc,classe:d.classe,doc:d.doc,tutor:d.tutor,ambito:d.ambito,ins:d.ins,note:d.note}));localStorage.setItem('pnrr3',JSON.stringify(slots))}else{slots=JSON.parse(localStorage.getItem('pnrr3')||'[]')}render()};
 
-// ===== HELPERS =====
-const DAYS_IT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
-const MONTHS_IT = ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+function showTab(t,b){document.querySelectorAll('.tb').forEach(x=>x.classList.remove('on'));if(b)b.classList.add('on');document.getElementById('tc').style.display=t==='calendar'?'block':'none';document.getElementById('tr').style.display=t==='riep'?'block':'none';document.getElementById('tb').style.display=t==='bando'?'block':'none';document.getElementById('bar').style.display=t==='calendar'?'flex':'none';if(t==='bando')document.getElementById('bif').src='Progetto.pdf';if(t==='riep')renderRiep()}
+function tgF(t){flt[t]=!flt[t];let m={frm:['ff','a'],lab:['fl','ab'],vnc:['fv','aa']};let[id,cls]=m[t];document.getElementById(id).className=flt[t]?'ft '+cls:'ft';render()}
+function dk(y,m,d){return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function sfd(k){return slots.filter(s=>s.date===k)}
+function hU(c){return slots.filter(s=>c?s.cat===c:true).reduce((a,s)=>a+(s.hours||0),0)}
 
-function dateKey(y,m,d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
-function slotsForDate(dk) { return slots.filter(s => s.date === dk); }
-function saveSlots() { localStorage.setItem('pnrr_slots', JSON.stringify(slots)); }
+function toS(slot){if(!U)return;let p=new URLSearchParams({action:'add',id:slot.id,data:slot.date,cat:slot.cat,sub:slot.sub||'',sede:slot.sede||'',mod:slot.mod||'',ore:slot.hours||'',ed:slot.ed||'',ndoc:slot.ndoc||'',classe:slot.classe||'',doc:slot.doc||'',tutor:slot.tutor||'',ambito:slot.ambito||'',ins:slot.ins||'',note:slot.note||''});new Image().src=U+'?'+p}
+function delS(slot){if(!U)return;new Image().src=U+'?action=delete&id='+slot.id}
 
-function totalHoursUsed(type) {
-  return slots.filter(s => type ? s.type === type : true).reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
-}
+function renderCtr(){let hF=hU('formazione'),hL=hU('laboratorio'),hT=hF+hL,rF=HP-hF,rL=HL-hL,rT=HT-hT;
+document.getElementById('ctr').innerHTML=`<div class="cx ${rT>0?'w':''}"><div class="cl">Ore totali</div><div class="cv">${hT}h / ${HT}h</div><div class="cd">${rT>0?'Mancano '+rT+'h':'Completato'}</div></div><div class="cx ${rF>0?'w':''}"><div class="cl">Percorsi (A)</div><div class="cv">${hF}h / ${HP}h</div><div class="cd">${rF>0?rF+'h':'OK'}</div></div><div class="cx ${rL>0?'w':''}"><div class="cl">Laboratori (B)</div><div class="cv">${hL}h / ${HL}h</div><div class="cd">${rL>0?rL+'h':'OK'}</div></div><div class="cx"><div class="cl">Sessioni</div><div class="cv">${slots.length}</div><div class="cd">Target: ${TGT} att.</div></div>`}
 
-// ===== GOOGLE SHEETS INTEGRATION =====
-// Replace with your Apps Script Web App URL
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTQS3CX68ltjxiW-K5sUeuhT_1c3WLU9aBIei2C-ov_ehf225Ye9WxLvc6tu-YaEqxrg/exec';
+function renderCal(){let el=document.getElementById('tc');el.innerHTML='';let sede=document.getElementById('fs').value;
+[[2026,6,1,30],[2026,7,1,31],[2026,8,1,31],[2026,9,1,30],[2026,10,1,31],[2026,11,1,30],[2026,12,1,23]].forEach(([y,m,s,e])=>{
+let ti=document.createElement('h3');ti.className='mti';ti.textContent=MN[m]+' '+y;el.appendChild(ti);
+let g=document.createElement('div');g.className='cg';GH.forEach(d=>{let h=document.createElement('div');h.className='ch';h.textContent=d;g.appendChild(h)});
+let fd=new Date(y,m-1,s),st=fd.getDay();st=st===0?6:st-1;for(let i=0;i<st;i++){let x=document.createElement('div');x.className='dy em';g.appendChild(x)}
+for(let d=s;d<=e;d++){let dt=new Date(y,m-1,d),dw=dt.getDay(),key=dk(y,m,d),ds=sfd(key),isW=dw===0||dw===6,isF=!!FE[key];
+let vis=ds.filter(z=>{if(z.cat==='formazione'&&!flt.frm)return false;if(z.cat==='laboratorio'&&!flt.lab)return false;if(z.cat==='vincolo'&&!flt.vnc)return false;if(sede!=='all'&&z.sede&&!z.sede.includes(sede)&&z.sede!=='OZ+MT')return false;return true});
+let c=document.createElement('div');c.className='dy'+(isF?' fe':isW?' we':'')+(vis.length?' hs':'');
+let inn=`<div class="dn">${d}</div><div class="dw">${GN[dw]}</div>`;
+if(isF)inn+=`<span class="sg vi">${FE[key]}</span>`;
+vis.forEach(z=>{let cl=z.cat==='laboratorio'?'la':z.cat==='formazione'?'fo':'vi';let lb=z.cat==='laboratorio'?'LAB':z.cat==='formazione'?'FORM':'VNC';inn+=`<span class="sg ${cl}">${lb} ${z.sub||z.ambito||''} ${z.hours?z.hours+'h':''}</span>`});
+c.innerHTML=inn;c.onclick=()=>openMo(key,d,MN[m],y);g.appendChild(c)}el.appendChild(g)})}
 
-function sendToSheets(slot) {
-  if (!SHEETS_URL) return;
-  const params = new URLSearchParams({
-    action: 'add',
-    date: slot.date,
-    type: slot.type,
-    subtype: slot.subtype || '',
-    hours: slot.hours,
-    classe: slot.classe || '',
-    docente: slot.docente || '',
-    tutor: slot.tutor || '',
-    note: slot.note || '',
-    timestamp: new Date().toISOString()
-  });
-  new Image().src = SHEETS_URL + '?' + params;
-}
+function openMo(key,day,mn,yr){let ex=sfd(key);document.getElementById('mt').textContent=day+' '+mn+' '+yr;
+let h='';if(ex.length){h+='<div style="margin-bottom:10px">';ex.forEach(s=>{let bg=s.cat==='laboratorio'?'lb':s.cat==='formazione'?'fb':'vb';let lb=s.cat==='laboratorio'?'Laboratorio':s.cat==='formazione'?'Formazione':'Vincolo';let det=[s.sub,s.mod,s.hours?s.hours+'h':'',s.ambito,s.classe].filter(Boolean).join(' | ');h+=`<div class="es ${bg}"><div><strong>${lb}</strong> — ${det}</div><button onclick="delSlot('${s.id}')" style="background:0;border:0;color:var(--rd);cursor:pointer;font-size:14px">&times;</button></div>`});h+='</div>'}
+h+=`<div class="tc"><button class="tcb" id="tf" onclick="sf('formazione')">Formazione</button><button class="tcb" id="tl" onclick="sf('laboratorio')">Laboratorio</button><button class="tcb" id="tv" onclick="sf('vincolo')">Vincolo</button></div><div id="sfm"></div>`;
+document.getElementById('mb').innerHTML=h;document.getElementById('mf').innerHTML='<button class="bt bt-g" onclick="cMo()">Chiudi</button>';document.getElementById('ov').classList.add('sh');window._k=key}
 
-function deleteFromSheets(slot) {
-  if (!SHEETS_URL) return;
-  const params = new URLSearchParams({ action: 'delete', id: slot.id });
-  new Image().src = SHEETS_URL + '?' + params;
-}
+function sf(t){document.querySelectorAll('.tcb').forEach(b=>b.className='tcb');document.getElementById(t==='formazione'?'tf':t==='laboratorio'?'tl':'tv').classList.add(t==='formazione'?'sf':t==='laboratorio'?'sl':'sv');
+let h='';
+if(t==='formazione'){h=`<div class="fg"><label>Tipo</label><select id="i1"><option value="Form. docenti - OZ">Formazione OZ</option><option value="Form. docenti - MT">Formazione MT</option><option value="Form. docenti - OZ+MT">Formazione OZ+MT</option></select></div><div class="fg"><label>Modalita</label><select id="i2">${MOD.map(m=>'<option>'+m+'</option>').join('')}</select></div><div class="fg"><label>Edizione</label><select id="i3"><option value="">—</option>${ED.filter(e=>e[0]==='P').map(e=>'<option>'+e+'</option>').join('')}</select></div><div class="fg"><label>Ore</label><select id="i4"><option value="2">2h</option><option value="3" selected>3h</option><option value="4">4h</option><option value="6">6h</option></select></div><div class="fg"><label>N. docenti</label><input id="i5" type="number" value="10"></div><div class="fg"><label>Inserito da</label><select id="i9">${INS.map(i=>'<option>'+i+'</option>').join('')}</select></div><div class="fg"><label>Note</label><input id="i6" placeholder="Opzionale"></div><button class="bt bt-p" onclick="addS('formazione')" style="width:100%;margin-top:6px">Aggiungi</button>`}
+else if(t==='laboratorio'){h=`<div class="fg"><label>Sede</label><select id="j1"><option value="Lab studenti - OZ">Orzinuovi</option><option value="Lab studenti - MT">Martinengo</option></select></div><div class="fg"><label>Modalita</label><select id="j2">${MOD.map(m=>'<option>'+m+'</option>').join('')}</select></div><div class="fg"><label>Edizione</label><select id="j3"><option value="">—</option>${ED.filter(e=>e[0]==='L').map(e=>'<option>'+e+'</option>').join('')}</select></div><div class="fg"><label>Ore</label><select id="j4"><option value="2">2h</option><option value="3" selected>3h</option><option value="4">4h</option><option value="6">6h</option></select></div><div class="fg"><label>Classe</label><input id="j5" placeholder="es. 3A Secondaria"></div><div class="fg"><label>Docente curricolare</label><select id="j6"><option value="">—</option><option value="Angella Francesca">Angella Francesca (OZ Primaria motoria)</option><option value="Appiani Alessia">Appiani Alessia (OZ Primaria lettere)</option><option value="Barbieri Anna">Barbieri Anna (OZ Sostegno sostegno)</option><option value="Bergamaschi Ilaria">Bergamaschi Ilaria (OZ Primaria lettere)</option><option value="Bergamaschi p. Luca">Bergamaschi p. Luca (OZ Primaria religione)</option><option value="Bertoli Siria">Bertoli Siria (OZ Secondaria lettere)</option><option value="Bettoni Paola">Bettoni Paola (OZ Secondaria inglese)</option><option value="Bonetti Laura">Bonetti Laura (OZ Secondaria lettere)</option><option value="Bosetti Olga">Bosetti Olga (OZ Primaria mat-sci)</option><option value="Bulla Giacomo">Bulla Giacomo (OZ Secondaria lettere)</option><option value="Castelli Andrea">Castelli Andrea (OZ Primaria mat-sci)</option><option value="Castelli Sara">Castelli Sara (OZ Secondaria spagnolo)</option><option value="Cerioli Andrea">Cerioli Andrea (OZ Pri/Sec informatica)</option><option value="Coltrini Elisabetta">Coltrini Elisabetta (OZ Secondaria arte)</option><option value="Conti Domenico">Conti Domenico (OZ Secondaria motoria)</option><option value="de Assis Monte p. Ederson">de Assis Monte p. Ederson (OZ OZ/MT religione)</option><option value="Decker Debora">Decker Debora (OZ Secondaria madrelingua)</option><option value="Dini Alessandro">Dini Alessandro (OZ Secondaria mat-sci)</option><option value="Franguelli Piergiovanna">Franguelli Piergiovanna (OZ Secondaria tecnologia)</option><option value="Garro fra Stefano">Garro fra Stefano (OZ Primaria religione)</option><option value="Grassi Paola">Grassi Paola (OZ Secondaria mat-sci)</option><option value="Grazioli Roberto">Grazioli Roberto (OZ Pri/Sec musica)</option><option value="Lamenta Adele">Lamenta Adele (OZ Primaria lettere)</option><option value="Maffeis Deborah">Maffeis Deborah (OZ Sostegno sostegno)</option><option value="Malagni Daniela">Malagni Daniela (OZ Pri/Sec inglese)</option><option value="Marchetti Barbara">Marchetti Barbara (OZ Primaria mat-sci)</option><option value="Martinelli Melissa">Martinelli Melissa (OZ Primaria sostegno)</option><option value="Mercandelli Nicole">Mercandelli Nicole (OZ Secondaria mat-sci)</option><option value="Pagani Jessica">Pagani Jessica (OZ Secondaria lettere)</option><option value="Piacentini Beatrice">Piacentini Beatrice (OZ Sostegno sostegno)</option><option value="Pini Savina">Pini Savina (OZ Primaria lettere)</option><option value="Quintini Catia">Quintini Catia (OZ Primaria mat-sci)</option><option value="Regonini Marco">Regonini Marco (OZ Secondaria lettere)</option><option value="Rigano Vittorio">Rigano Vittorio (OZ Secondaria mat-sci)</option><option value="Roda Elisa">Roda Elisa (OZ Primaria lettere)</option><option value="Rodondi Francesca">Rodondi Francesca (OZ Sostegno sostegno)</option><option value="Rota Eleonora">Rota Eleonora (OZ Secondaria lettere)</option><option value="Scaroni Adele">Scaroni Adele (OZ Primaria mat-sci)</option><option value="Serini Alessia">Serini Alessia (OZ Sostegno sostegno)</option><option value="Sottura Sara">Sottura Sara (OZ Sostegno sostegno)</option><option value="Beretta ">Beretta  (MT Primaria mat-sci)</option><option value="Casali ">Casali  (MT Primaria lettere)</option><option value="Minola ">Minola  (MT Primaria lettere)</option><option value="Caslini ">Caslini  (MT Primaria mat-sci)</option><option value="Nisoli ">Nisoli  (MT Primaria mat-sci)</option><option value="Scaburri ">Scaburri  (MT Primaria lettere)</option><option value="Palmas ">Palmas  (MT Primaria lettere)</option><option value="Longhi ">Longhi  (MT Primaria mat-sci)</option><option value="Ranghetti ">Ranghetti  (MT Primaria lettere)</option><option value="Suardi ">Suardi  (MT Primaria lettere)</option><option value="Busetti ">Busetti  (MT Primaria mat-sci)</option><option value="Vecchi ">Vecchi  (MT Primaria mat-sci)</option><option value="Sempio ">Sempio  (MT Primaria lettere)</option><option value="Zamuner ">Zamuner  (MT Primaria mat-sci)</option><option value="Cappelletti ">Cappelletti  (MT Primaria lettere)</option><option value="Previdi ">Previdi  (MT Primaria mat-sci)</option><option value="Poggio ">Poggio  (MT Primaria lettere)</option><option value="Manenti ">Manenti  (MT Primaria lettere)</option><option value="Muschio ">Muschio  (MT Primaria lettere)</option><option value="Bonfadini ">Bonfadini  (MT Primaria tec/arte)</option><option value="Belotti ">Belotti  (MT Primaria musica)</option><option value="Saccomandi ">Saccomandi  (MT Primaria musica)</option><option value="Zendrini ">Zendrini  (MT Primaria motoria)</option><option value="Motterlini ">Motterlini  (MT Primaria motoria)</option><option value="Caironi ">Caironi  (MT Primaria inglese)</option><option value="Ubbiali ">Ubbiali  (MT Primaria inglese)</option><option value="Ong ">Ong  (MT Primaria inglese)</option><option value="Nassozi ">Nassozi  (MT Primaria inglese)</option><option value="Fasce ">Fasce  (MT Primaria inglese)</option><option value="Casciani ">Casciani  (MT Primaria arte)</option><option value="Ogao ">Ogao  (MT Primaria inglese)</option><option value="Sostegno Uno">Sostegno Uno (MT Primaria sostegno)</option><option value="Sostegno Due">Sostegno Due (MT Primaria sostegno)</option><option value="Arnoldi Alexia">Arnoldi Alexia (MT Secondaria lettere)</option><option value="Castro Federica">Castro Federica (MT Secondaria lettere)</option><option value="Ferrari Gloria">Ferrari Gloria (MT Secondaria lettere)</option><option value="Gamba Marco">Gamba Marco (MT Secondaria lettere)</option><option value="Manenti Chiara">Manenti Chiara (MT Secondaria lettere)</option><option value="Moscheni Federica">Moscheni Federica (MT Secondaria lettere)</option><option value="Macchi Melissa L.">Macchi Melissa L. (MT Secondaria lettere)</option><option value="Lamera Daniela">Lamera Daniela (MT Secondaria lettere)</option><option value="Bertazzoli Lucrezia">Bertazzoli Lucrezia (MT Secondaria mat-sci)</option><option value="Costa Elena">Costa Elena (MT Secondaria mat-sci)</option><option value="Sanvitti Veronica">Sanvitti Veronica (MT Secondaria mat-sci)</option><option value="Colombo Sofia">Colombo Sofia (MT Secondaria mat-sci)</option><option value="Pezzotta M.Chiara">Pezzotta M.Chiara (MT Secondaria mat-sci)</option><option value="Cividini MariaPia">Cividini MariaPia (MT Secondaria ing/spa)</option><option value="Mainoldi Francesca">Mainoldi Francesca (MT Secondaria ing/spa)</option><option value="Bucchi Giulia">Bucchi Giulia (MT Secondaria ing/spa)</option><option value="Lissandro Othim">Lissandro Othim (MT Secondaria ing/spa)</option><option value="Iacono Silvia">Iacono Silvia (MT Secondaria ing/spa)</option><option value="Rosin Emilia">Rosin Emilia (MT Secondaria ing/spa)</option><option value="Dossena Micol">Dossena Micol (MT Secondaria arte)</option><option value="Adu Gyamfi David">Adu Gyamfi David (MT Secondaria musica)</option><option value="Premoli Paolo">Premoli Paolo (MT Secondaria musica)</option><option value="Tucker Gregory">Tucker Gregory (MT Secondaria arte/madr.)</option><option value="Manenti Cinzia">Manenti Cinzia (MT Secondaria tec/info)</option><option value="Capister Laura">Capister Laura (MT Secondaria motoria)</option><option value="Fratus Elena">Fratus Elena (MT Secondaria sost/mot)</option><option value="Decker Debora">Decker Debora (MT Secondaria madrelingua)</option></select></div><div class="fg"><label>Tutor</label><select id="j7"><option value="">—</option><option value="Angella Francesca">Angella Francesca (OZ Primaria motoria)</option><option value="Appiani Alessia">Appiani Alessia (OZ Primaria lettere)</option><option value="Barbieri Anna">Barbieri Anna (OZ Sostegno sostegno)</option><option value="Bergamaschi Ilaria">Bergamaschi Ilaria (OZ Primaria lettere)</option><option value="Bergamaschi p. Luca">Bergamaschi p. Luca (OZ Primaria religione)</option><option value="Bertoli Siria">Bertoli Siria (OZ Secondaria lettere)</option><option value="Bettoni Paola">Bettoni Paola (OZ Secondaria inglese)</option><option value="Bonetti Laura">Bonetti Laura (OZ Secondaria lettere)</option><option value="Bosetti Olga">Bosetti Olga (OZ Primaria mat-sci)</option><option value="Bulla Giacomo">Bulla Giacomo (OZ Secondaria lettere)</option><option value="Castelli Andrea">Castelli Andrea (OZ Primaria mat-sci)</option><option value="Castelli Sara">Castelli Sara (OZ Secondaria spagnolo)</option><option value="Cerioli Andrea">Cerioli Andrea (OZ Pri/Sec informatica)</option><option value="Coltrini Elisabetta">Coltrini Elisabetta (OZ Secondaria arte)</option><option value="Conti Domenico">Conti Domenico (OZ Secondaria motoria)</option><option value="de Assis Monte p. Ederson">de Assis Monte p. Ederson (OZ OZ/MT religione)</option><option value="Decker Debora">Decker Debora (OZ Secondaria madrelingua)</option><option value="Dini Alessandro">Dini Alessandro (OZ Secondaria mat-sci)</option><option value="Franguelli Piergiovanna">Franguelli Piergiovanna (OZ Secondaria tecnologia)</option><option value="Garro fra Stefano">Garro fra Stefano (OZ Primaria religione)</option><option value="Grassi Paola">Grassi Paola (OZ Secondaria mat-sci)</option><option value="Grazioli Roberto">Grazioli Roberto (OZ Pri/Sec musica)</option><option value="Lamenta Adele">Lamenta Adele (OZ Primaria lettere)</option><option value="Maffeis Deborah">Maffeis Deborah (OZ Sostegno sostegno)</option><option value="Malagni Daniela">Malagni Daniela (OZ Pri/Sec inglese)</option><option value="Marchetti Barbara">Marchetti Barbara (OZ Primaria mat-sci)</option><option value="Martinelli Melissa">Martinelli Melissa (OZ Primaria sostegno)</option><option value="Mercandelli Nicole">Mercandelli Nicole (OZ Secondaria mat-sci)</option><option value="Pagani Jessica">Pagani Jessica (OZ Secondaria lettere)</option><option value="Piacentini Beatrice">Piacentini Beatrice (OZ Sostegno sostegno)</option><option value="Pini Savina">Pini Savina (OZ Primaria lettere)</option><option value="Quintini Catia">Quintini Catia (OZ Primaria mat-sci)</option><option value="Regonini Marco">Regonini Marco (OZ Secondaria lettere)</option><option value="Rigano Vittorio">Rigano Vittorio (OZ Secondaria mat-sci)</option><option value="Roda Elisa">Roda Elisa (OZ Primaria lettere)</option><option value="Rodondi Francesca">Rodondi Francesca (OZ Sostegno sostegno)</option><option value="Rota Eleonora">Rota Eleonora (OZ Secondaria lettere)</option><option value="Scaroni Adele">Scaroni Adele (OZ Primaria mat-sci)</option><option value="Serini Alessia">Serini Alessia (OZ Sostegno sostegno)</option><option value="Sottura Sara">Sottura Sara (OZ Sostegno sostegno)</option><option value="Beretta ">Beretta  (MT Primaria mat-sci)</option><option value="Casali ">Casali  (MT Primaria lettere)</option><option value="Minola ">Minola  (MT Primaria lettere)</option><option value="Caslini ">Caslini  (MT Primaria mat-sci)</option><option value="Nisoli ">Nisoli  (MT Primaria mat-sci)</option><option value="Scaburri ">Scaburri  (MT Primaria lettere)</option><option value="Palmas ">Palmas  (MT Primaria lettere)</option><option value="Longhi ">Longhi  (MT Primaria mat-sci)</option><option value="Ranghetti ">Ranghetti  (MT Primaria lettere)</option><option value="Suardi ">Suardi  (MT Primaria lettere)</option><option value="Busetti ">Busetti  (MT Primaria mat-sci)</option><option value="Vecchi ">Vecchi  (MT Primaria mat-sci)</option><option value="Sempio ">Sempio  (MT Primaria lettere)</option><option value="Zamuner ">Zamuner  (MT Primaria mat-sci)</option><option value="Cappelletti ">Cappelletti  (MT Primaria lettere)</option><option value="Previdi ">Previdi  (MT Primaria mat-sci)</option><option value="Poggio ">Poggio  (MT Primaria lettere)</option><option value="Manenti ">Manenti  (MT Primaria lettere)</option><option value="Muschio ">Muschio  (MT Primaria lettere)</option><option value="Bonfadini ">Bonfadini  (MT Primaria tec/arte)</option><option value="Belotti ">Belotti  (MT Primaria musica)</option><option value="Saccomandi ">Saccomandi  (MT Primaria musica)</option><option value="Zendrini ">Zendrini  (MT Primaria motoria)</option><option value="Motterlini ">Motterlini  (MT Primaria motoria)</option><option value="Caironi ">Caironi  (MT Primaria inglese)</option><option value="Ubbiali ">Ubbiali  (MT Primaria inglese)</option><option value="Ong ">Ong  (MT Primaria inglese)</option><option value="Nassozi ">Nassozi  (MT Primaria inglese)</option><option value="Fasce ">Fasce  (MT Primaria inglese)</option><option value="Casciani ">Casciani  (MT Primaria arte)</option><option value="Ogao ">Ogao  (MT Primaria inglese)</option><option value="Sostegno Uno">Sostegno Uno (MT Primaria sostegno)</option><option value="Sostegno Due">Sostegno Due (MT Primaria sostegno)</option><option value="Arnoldi Alexia">Arnoldi Alexia (MT Secondaria lettere)</option><option value="Castro Federica">Castro Federica (MT Secondaria lettere)</option><option value="Ferrari Gloria">Ferrari Gloria (MT Secondaria lettere)</option><option value="Gamba Marco">Gamba Marco (MT Secondaria lettere)</option><option value="Manenti Chiara">Manenti Chiara (MT Secondaria lettere)</option><option value="Moscheni Federica">Moscheni Federica (MT Secondaria lettere)</option><option value="Macchi Melissa L.">Macchi Melissa L. (MT Secondaria lettere)</option><option value="Lamera Daniela">Lamera Daniela (MT Secondaria lettere)</option><option value="Bertazzoli Lucrezia">Bertazzoli Lucrezia (MT Secondaria mat-sci)</option><option value="Costa Elena">Costa Elena (MT Secondaria mat-sci)</option><option value="Sanvitti Veronica">Sanvitti Veronica (MT Secondaria mat-sci)</option><option value="Colombo Sofia">Colombo Sofia (MT Secondaria mat-sci)</option><option value="Pezzotta M.Chiara">Pezzotta M.Chiara (MT Secondaria mat-sci)</option><option value="Cividini MariaPia">Cividini MariaPia (MT Secondaria ing/spa)</option><option value="Mainoldi Francesca">Mainoldi Francesca (MT Secondaria ing/spa)</option><option value="Bucchi Giulia">Bucchi Giulia (MT Secondaria ing/spa)</option><option value="Lissandro Othim">Lissandro Othim (MT Secondaria ing/spa)</option><option value="Iacono Silvia">Iacono Silvia (MT Secondaria ing/spa)</option><option value="Rosin Emilia">Rosin Emilia (MT Secondaria ing/spa)</option><option value="Dossena Micol">Dossena Micol (MT Secondaria arte)</option><option value="Adu Gyamfi David">Adu Gyamfi David (MT Secondaria musica)</option><option value="Premoli Paolo">Premoli Paolo (MT Secondaria musica)</option><option value="Tucker Gregory">Tucker Gregory (MT Secondaria arte/madr.)</option><option value="Manenti Cinzia">Manenti Cinzia (MT Secondaria tec/info)</option><option value="Capister Laura">Capister Laura (MT Secondaria motoria)</option><option value="Fratus Elena">Fratus Elena (MT Secondaria sost/mot)</option><option value="Decker Debora">Decker Debora (MT Secondaria madrelingua)</option></select></div><div class="fg"><label>Inserito da</label><select id="j9">${INS.map(i=>'<option>'+i+'</option>').join('')}</select></div><div class="fg"><label>Note</label><input id="j8" placeholder="Opzionale"></div><button class="bt bt-p" onclick="addS('laboratorio')" style="width:100%;margin-top:6px;background:var(--bl)">Aggiungi</button>`}
+else{h=`<div class="fg"><label>Ambito</label><select id="v1">${AMB.map(a=>'<option>'+a+'</option>').join('')}</select></div><div class="fg"><label>Tipo impegno</label><select id="v2">${VT.map(v=>'<option>'+v+'</option>').join('')}</select></div><div class="fg"><label>Inserito da</label><select id="v3">${INS.map(i=>'<option>'+i+'</option>').join('')}</select></div><div class="fg"><label>Note</label><input id="v4" placeholder="Orario, dettagli..."></div><button class="bt bt-p" onclick="addS('vincolo')" style="width:100%;margin-top:6px;background:var(--am)">Aggiungi</button>`}
+document.getElementById('sfm').innerHTML=h}
 
-// ===== RENDER COUNTERS =====
-function renderCounters() {
-  const hPerc = totalHoursUsed('formazione');
-  const hLab = totalHoursUsed('laboratorio');
-  const hTot = hPerc + hLab;
-  const percRemain = HOURS_PERCORSI_TOTAL - hPerc;
-  const labRemain = HOURS_LAB_TOTAL - hLab;
-  const totRemain = HOURS_TOTAL - hTot;
-  const attestati = slots.length; // simplified: each slot session contributes
+function addS(t){let s={id:'S'+Date.now()+Math.random().toString(36).slice(2,5),date:window._k,cat:t};
+if(t==='formazione'){s.sub=document.getElementById('i1').value;s.mod=document.getElementById('i2').value;s.ed=document.getElementById('i3').value;s.hours=+document.getElementById('i4').value;s.ndoc=document.getElementById('i5').value;s.ins=document.getElementById('i9').value;s.note=document.getElementById('i6').value;s.sede=s.sub.includes('OZ+MT')?'OZ+MT':s.sub.includes('OZ')?'OZ':'MT'}
+else if(t==='laboratorio'){s.sub=document.getElementById('j1').value;s.mod=document.getElementById('j2').value;s.ed=document.getElementById('j3').value;s.hours=+document.getElementById('j4').value;s.classe=document.getElementById('j5').value;s.doc=document.getElementById('j6').value;s.tutor=document.getElementById('j7').value;s.ins=document.getElementById('j9').value;s.note=document.getElementById('j8').value;s.sede=s.sub.includes('OZ')?'OZ':'MT'}
+else{s.ambito=document.getElementById('v1').value;s.sub=document.getElementById('v2').value;s.ins=document.getElementById('v3').value;s.note=document.getElementById('v4').value;s.sede=s.ambito.includes('OZ')&&!s.ambito.includes('MT')?'OZ':s.ambito.includes('MT')&&!s.ambito.includes('OZ')?'MT':'OZ+MT'}
+slots.push(s);localStorage.setItem('pnrr3',JSON.stringify(slots));toS(s);cMo();render()}
 
-  document.getElementById('counters').innerHTML = `
-    <div class="counter-card ${totRemain <= 0 ? '' : 'warn'}">
-      <div class="label">Ore totali</div>
-      <div class="value">${hTot}h / ${HOURS_TOTAL}h</div>
-      <div class="detail">${totRemain > 0 ? 'Mancano ' + totRemain + 'h' : 'Completato'}</div>
-    </div>
-    <div class="counter-card ${percRemain <= 0 ? '' : 'warn'}">
-      <div class="label">Percorsi formativi (A)</div>
-      <div class="value">${hPerc}h / ${HOURS_PERCORSI_TOTAL}h</div>
-      <div class="detail">${percRemain > 0 ? 'Mancano ' + percRemain + 'h' : 'Completato'}</div>
-    </div>
-    <div class="counter-card ${labRemain <= 0 ? '' : 'warn'}">
-      <div class="label">Laboratori studenti (B)</div>
-      <div class="value">${hLab}h / ${HOURS_LAB_TOTAL}h</div>
-      <div class="detail">${labRemain > 0 ? 'Mancano ' + labRemain + 'h' : 'Completato'}</div>
-    </div>
-    <div class="counter-card">
-      <div class="label">Sessioni pianificate</div>
-      <div class="value">${slots.length}</div>
-      <div class="detail">Budget: ${BUDGET_TOTAL.toLocaleString('it-IT',{style:'currency',currency:'EUR'})}</div>
-    </div>
-  `;
-}
+function delSlot(id){let s=slots.find(x=>x.id===id);slots=slots.filter(x=>x.id!==id);localStorage.setItem('pnrr3',JSON.stringify(slots));if(s)delS(s);cMo();render()}
+function cMo(){document.getElementById('ov').classList.remove('sh')}
 
-// ===== RENDER CALENDAR =====
-function renderCalendar() {
-  const container = document.getElementById('tab-calendar');
-  container.innerHTML = '';
+function renderRiep(){let c=document.getElementById('tr');let hF=hU('formazione'),hL=hU('laboratorio'),hT=hF+hL;
+let pF=Math.min(100,hF/HP*100),pL=Math.min(100,hL/HL*100),pT=Math.min(100,hT/HT*100);
+let nV=slots.filter(s=>s.cat==='vincolo').length;
+let h=`<h3 class="mti">Avanzamento</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px"><div><div class="plb"><span>Totale</span><span>${hT}h / ${HT}h (${pT.toFixed(1)}%)</span></div><div class="pb"><div class="pf g" style="width:${pT}%"></div></div><div class="plb"><span>Percorsi (A)</span><span>${hF}h / ${HP}h</span></div><div class="pb"><div class="pf g" style="width:${pF}%"></div></div><div class="plb"><span>Laboratori (B)</span><span>${hL}h / ${HL}h</span></div><div class="pb"><div class="pf b" style="width:${pL}%"></div></div></div><div style="padding:12px;background:var(--gp);border-radius:var(--r);font-size:11px"><strong>Codice:</strong> M4C1I2.1-2026-1765-P-66832<br><strong>CUP:</strong> F54D25009320006<br><strong>Budget:</strong> 48.182,40 EUR<br><strong>Partner:</strong> Impara Digitale<br><strong>Scadenza:</strong> 31/12/2026<br><strong>Vincoli inseriti:</strong> ${nV}<br><strong>Target:</strong> ${TGT} attestati</div></div>`;
+h+='<h3 class="mti">Tutte le sessioni</h3>';
+let so=[...slots].sort((a,b)=>a.date.localeCompare(b.date));
+if(!so.length)h+='<p style="color:var(--g5);font-size:12px">Nessuna sessione.</p>';
+else{so.forEach(s=>{let p=s.date.split('-');let ds=p[2]+'/'+p[1];let cl=s.cat==='laboratorio'?'la':s.cat==='formazione'?'fo':'vi';let lb=s.cat==='laboratorio'?'LAB':s.cat==='formazione'?'FORM':'VNC';let info=[s.sub,s.mod,s.ambito,s.classe,s.doc].filter(Boolean).join(' | ');h+=`<div style="display:flex;gap:8px;align-items:center;padding:6px 8px;background:var(--w);border:1px solid var(--g3);border-radius:4px;margin-bottom:3px;font-size:11px"><span style="min-width:40px;font-weight:700">${ds}</span><span class="sg ${cl}" style="display:inline;padding:2px 6px">${lb}</span><span style="flex:1">${info}${s.note?' — '+s.note:''}</span><span style="font-weight:700;color:var(--gd)">${s.hours?s.hours+'h':''}</span><button onclick="delSlot('${s.id}');renderRiep()" style="background:0;border:0;color:var(--rd);cursor:pointer">&times;</button></div>`})}
+c.innerHTML=h}
 
-  const periods = [
-    { year: 2026, month: 6, startDay: 1, endDay: 30, label: 'Giugno 2026' },
-    { year: 2026, month: 9, startDay: 1, endDay: 11, label: 'Settembre 2026 (1-11)' },
-  ];
-
-  periods.forEach(p => {
-    const title = document.createElement('h3');
-    title.className = 'month-title';
-    title.textContent = p.label;
-    container.appendChild(title);
-
-    const grid = document.createElement('div');
-    grid.className = 'cal-grid';
-
-    // Headers
-    DAYS_IT.forEach(d => {
-      const h = document.createElement('div');
-      h.className = 'cal-header';
-      h.textContent = d;
-      grid.appendChild(h);
-    });
-
-    // First day of month
-    const firstDate = new Date(p.year, p.month - 1, p.startDay);
-    let startDow = firstDate.getDay(); // 0=Sun
-
-    // Empty cells before start
-    for (let i = 0; i < startDow; i++) {
-      const empty = document.createElement('div');
-      empty.className = 'cal-day empty';
-      grid.appendChild(empty);
-    }
-
-    // Days
-    for (let d = p.startDay; d <= p.endDay; d++) {
-      const dt = new Date(p.year, p.month - 1, d);
-      const dow = dt.getDay();
-      const dk = dateKey(p.year, p.month, d);
-      const daySlots = slotsForDate(dk);
-
-      const cell = document.createElement('div');
-      cell.className = 'cal-day' + (dow === 0 || dow === 6 ? ' weekend' : '') + (daySlots.length > 0 ? ' has-slot' : '');
-
-      let inner = `<div class="day-num">${d}</div><div class="day-name">${DAYS_IT[dow]}</div>`;
-      daySlots.forEach(s => {
-        const cls = s.type === 'laboratorio' ? 'lab' : 'form';
-        const label = s.type === 'laboratorio' ? 'LAB' : 'FORM';
-        const sub = s.subtype ? ` ${s.subtype}` : '';
-        inner += `<span class="slot-badge ${cls}">${label}${sub} <span class="slot-hours">${s.hours}h</span></span>`;
-      });
-
-      cell.innerHTML = inner;
-      cell.onclick = () => openDayModal(dk, d, MONTHS_IT[p.month], p.year);
-      grid.appendChild(cell);
-    }
-
-    container.appendChild(grid);
-  });
-}
-
-// ===== MODAL =====
-function openDayModal(dk, day, monthName, year) {
-  const existing = slotsForDate(dk);
-  const modal = document.getElementById('modal-overlay');
-  document.getElementById('modal-title').textContent = `${day} ${monthName} ${year}`;
-
-  let html = '';
-
-  // Existing slots
-  if (existing.length > 0) {
-    html += '<div style="margin-bottom:16px;">';
-    existing.forEach((s, i) => {
-      const cls = s.type === 'laboratorio' ? 'lab' : 'form';
-      const label = s.type === 'laboratorio' ? 'Laboratorio studenti' : 'Formazione docenti';
-      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:${s.type==='laboratorio'?'var(--blue-light)':'var(--green-pale)'};border-radius:6px;margin-bottom:6px;font-size:13px;">
-        <div><strong>${label}</strong> — ${s.hours}h${s.subtype ? ' ('+s.subtype+')' : ''}${s.classe ? ' — '+s.classe : ''}</div>
-        <button onclick="deleteSlot('${s.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;" title="Elimina">&times;</button>
-      </div>`;
-    });
-    html += '</div>';
-  }
-
-  // Add new slot form
-  html += `
-    <div class="form-group">
-      <label>Tipo attivita</label>
-      <select id="slot-type" onchange="toggleSubfields()">
-        <option value="">— Seleziona —</option>
-        <option value="laboratorio">Laboratorio studenti</option>
-        <option value="formazione">Formazione docenti</option>
-      </select>
-    </div>
-    <div id="subfields-lab" style="display:none">
-      <div class="form-group">
-        <label>Classe</label>
-        <input id="slot-classe" placeholder="es. 3A Secondaria">
-      </div>
-      <div class="form-group">
-        <label>Docente curricolare</label>
-        <input id="slot-docente" placeholder="es. Bonetti Laura">
-      </div>
-      <div class="form-group">
-        <label>Tutor</label>
-        <input id="slot-tutor" placeholder="es. Cerioli Andrea">
-      </div>
-    </div>
-    <div id="subfields-form" style="display:none">
-      <div class="form-group">
-        <label>Sede</label>
-        <select id="slot-sede">
-          <option value="OZ">Orzinuovi</option>
-          <option value="MT">Martinengo</option>
-          <option value="OZ+MT">Orzinuovi + Martinengo</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Durata (ore)</label>
-      <select id="slot-hours">
-        <option value="2">2 ore</option>
-        <option value="3" selected>3 ore</option>
-        <option value="4">4 ore</option>
-        <option value="5">5 ore</option>
-        <option value="6">6 ore</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Note</label>
-      <input id="slot-note" placeholder="Opzionale">
-    </div>
-  `;
-
-  document.getElementById('modal-body').innerHTML = html;
-  document.getElementById('modal-footer').innerHTML = `
-    <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
-    <button class="btn btn-primary" onclick="addSlot('${dk}')">Aggiungi</button>
-  `;
-  modal.classList.add('show');
-}
-
-function toggleSubfields() {
-  const type = document.getElementById('slot-type').value;
-  document.getElementById('subfields-lab').style.display = type === 'laboratorio' ? 'block' : 'none';
-  document.getElementById('subfields-form').style.display = type === 'formazione' ? 'block' : 'none';
-}
-
-function addSlot(dk) {
-  const type = document.getElementById('slot-type').value;
-  if (!type) return;
-  const hours = document.getElementById('slot-hours').value;
-  const note = document.getElementById('slot-note').value;
-
-  const slot = {
-    id: 'S' + Date.now() + Math.random().toString(36).slice(2,6),
-    date: dk,
-    type: type,
-    hours: parseFloat(hours),
-    note: note,
-  };
-
-  if (type === 'laboratorio') {
-    slot.classe = document.getElementById('slot-classe').value;
-    slot.docente = document.getElementById('slot-docente').value;
-    slot.tutor = document.getElementById('slot-tutor').value;
-  } else {
-    slot.subtype = document.getElementById('slot-sede').value;
-  }
-
-  slots.push(slot);
-  saveSlots();
-  sendToSheets(slot);
-  closeModal();
-  renderAll();
-}
-
-function deleteSlot(id) {
-  const slot = slots.find(s => s.id === id);
-  slots = slots.filter(s => s.id !== id);
-  saveSlots();
-  if (slot) deleteFromSheets(slot);
-  closeModal();
-  renderAll();
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-}
-
-// ===== RIEPILOGO =====
-function renderRiepilogo() {
-  const container = document.getElementById('tab-riepilogo');
-  const hPerc = totalHoursUsed('formazione');
-  const hLab = totalHoursUsed('laboratorio');
-  const hTot = hPerc + hLab;
-
-  const pctPerc = Math.min(100, (hPerc / HOURS_PERCORSI_TOTAL * 100));
-  const pctLab = Math.min(100, (hLab / HOURS_LAB_TOTAL * 100));
-  const pctTot = Math.min(100, (hTot / HOURS_TOTAL * 100));
-
-  let html = `
-    <h3 class="month-title">Avanzamento progetto</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
-      <div>
-        <div class="progress-bar-container">
-          <div class="progress-label"><span>Ore totali</span><span>${hTot}h / ${HOURS_TOTAL}h (${pctTot.toFixed(1)}%)</span></div>
-          <div class="progress-bar"><div class="progress-fill perc" style="width:${pctTot}%"></div></div>
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-label"><span>Percorsi (A)</span><span>${hPerc}h / ${HOURS_PERCORSI_TOTAL}h</span></div>
-          <div class="progress-bar"><div class="progress-fill perc" style="width:${pctPerc}%"></div></div>
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-label"><span>Laboratori (B)</span><span>${hLab}h / ${HOURS_LAB_TOTAL}h</span></div>
-          <div class="progress-bar"><div class="progress-fill lab" style="width:${pctLab}%"></div></div>
-        </div>
-      </div>
-      <div>
-        <div style="padding:16px;background:var(--green-pale);border-radius:var(--radius);font-size:13px;">
-          <strong>Budget:</strong> ${BUDGET_TOTAL.toLocaleString('it-IT',{style:'currency',currency:'EUR'})}<br>
-          <strong>Codice progetto:</strong> M4C1I2.1-2026-1765-P-66832<br>
-          <strong>CUP:</strong> F54D25009320006<br>
-          <strong>Partner:</strong> Impara Digitale<br>
-          <strong>Scadenza:</strong> 31/12/2026<br>
-          <strong>Target attestati:</strong> ${ATTESTATI_TARGET}
-        </div>
-      </div>
-    </div>
-
-    <h3 class="month-title">Tutte le sessioni pianificate</h3>
-  `;
-
-  // Sort by date
-  const sorted = [...slots].sort((a,b) => a.date.localeCompare(b.date));
-
-  if (sorted.length === 0) {
-    html += '<p style="color:var(--gray-500);font-size:14px;">Nessuna sessione pianificata. Clicca su un giorno del calendario per aggiungerne una.</p>';
-  } else {
-    html += '<div class="slot-list">';
-    sorted.forEach(s => {
-      const parts = s.date.split('-');
-      const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
-      const dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
-      const dayName = DAYS_IT[dt.getDay()];
-      const cls = s.type === 'laboratorio' ? 'lab' : 'form';
-      const label = s.type === 'laboratorio' ? 'LAB' : 'FORM';
-      let info = '';
-      if (s.type === 'laboratorio') {
-        info = [s.classe, s.docente, s.tutor].filter(Boolean).join(' — ') || 'Dettagli da definire';
-      } else {
-        info = s.subtype || '';
-      }
-
-      html += `<div class="slot-item">
-        <div><strong>${dateStr}</strong><br><span style="color:var(--gray-500);font-size:11px;">${dayName}</span></div>
-        <div><span class="type-badge ${cls}">${label}</span></div>
-        <div>${info}${s.note ? '<br><span style="font-size:11px;color:var(--gray-500);">'+s.note+'</span>' : ''}</div>
-        <div class="hours">${s.hours}h</div>
-        <div><button class="delete-btn" onclick="deleteSlot('${s.id}');renderRiepilogo();" title="Elimina">&times;</button></div>
-      </div>`;
-    });
-    html += '</div>';
-  }
-
-  container.innerHTML = html;
-}
-
-// ===== RENDER ALL =====
-function renderAll() {
-  renderCounters();
-  renderCalendar();
-}
-
-// Close modal on overlay click
-document.getElementById('modal-overlay').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-</script>
-</body>
-</html>
+function render(){renderCtr();renderCal()}
+</script></body></html>
