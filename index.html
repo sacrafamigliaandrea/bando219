@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intelligenze in dialogo — Planner Formativo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-dark: #1B6D3F;
+  --green-mid: #2A8B57;
+  --green-light: #3DA06A;
+  --green-pale: #E8F5E9;
+  --green-bg: #F1F8F2;
+  --amber: #F57F17;
+  --amber-light: #FFF8E1;
+  --blue: #1565C0;
+  --blue-light: #E3F2FD;
+  --red: #C62828;
+  --red-light: #FFEBEE;
+  --gray-900: #1a1a1a;
+  --gray-700: #444;
+  --gray-500: #888;
+  --gray-300: #ccc;
+  --gray-100: #f5f5f5;
+  --white: #fff;
+  --radius: 8px;
+  --shadow: 0 2px 12px rgba(27,109,63,.12);
+  --shadow-lg: 0 8px 32px rgba(27,109,63,.18);
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--gray-100); color: var(--gray-900); min-height:100vh; }
+
+/* ===== LOGIN ===== */
+#login-screen {
+  display:flex; align-items:center; justify-content:center; min-height:100vh;
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 50%, var(--green-light) 100%);
+}
+.login-card {
+  background: var(--white); border-radius: 16px; padding: 48px 40px; width: 380px;
+  box-shadow: var(--shadow-lg); text-align:center;
+}
+.login-card h1 { font-family: var(--font-display); font-size: 24px; color: var(--green-dark); margin-bottom: 4px; }
+.login-card .subtitle { font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
+.login-card input {
+  width:100%; padding: 12px 16px; border: 2px solid var(--gray-300); border-radius: var(--radius);
+  font-family: var(--font); font-size: 15px; outline:none; transition: border-color .2s;
+}
+.login-card input:focus { border-color: var(--green-mid); }
+.login-card .btn-login {
+  width:100%; margin-top:16px; padding:12px; border:none; border-radius: var(--radius);
+  background: var(--green-dark); color: var(--white); font-family: var(--font); font-weight:700;
+  font-size:15px; cursor:pointer; transition: background .2s;
+}
+.login-card .btn-login:hover { background: var(--green-mid); }
+.login-error { color: var(--red); font-size:13px; margin-top:8px; display:none; }
+
+/* ===== APP ===== */
+#app { display:none; }
+
+/* NAV */
+.topbar {
+  background: var(--green-dark); color: var(--white); padding: 0 24px; height: 56px;
+  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100;
+}
+.topbar h1 { font-family: var(--font-display); font-size: 18px; font-weight:400; }
+.topbar-right { display:flex; gap:8px; align-items:center; }
+.tab-btn {
+  padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.3);
+  background:transparent; color: var(--white); font-family: var(--font); font-size:13px;
+  font-weight:500; cursor:pointer; transition: all .2s;
+}
+.tab-btn:hover, .tab-btn.active { background: rgba(255,255,255,.15); border-color: var(--white); }
+
+/* COUNTERS */
+.counters {
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;
+  padding: 20px 24px; background: var(--white); border-bottom: 1px solid var(--gray-300);
+}
+.counter-card {
+  padding: 16px; border-radius: var(--radius); border-left: 4px solid var(--green-dark);
+  background: var(--green-bg);
+}
+.counter-card.warn { border-left-color: var(--amber); background: var(--amber-light); }
+.counter-card .label { font-size: 11px; text-transform:uppercase; letter-spacing:.5px; color: var(--gray-500); font-weight:700; }
+.counter-card .value { font-size: 28px; font-weight:700; color: var(--green-dark); margin-top:2px; }
+.counter-card.warn .value { color: var(--amber); }
+.counter-card .detail { font-size: 12px; color: var(--gray-500); margin-top:2px; }
+
+/* CALENDAR */
+.calendar-section { padding: 20px 24px; }
+.month-title {
+  font-family: var(--font-display); font-size: 20px; color: var(--green-dark);
+  margin-bottom:12px; padding-bottom:8px; border-bottom: 2px solid var(--green-pale);
+}
+.cal-grid {
+  display:grid; grid-template-columns: repeat(7, 1fr); gap:4px; margin-bottom:24px;
+}
+.cal-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  color: var(--gray-500); text-align:center; padding:8px 4px; }
+.cal-day {
+  min-height: 90px; background: var(--white); border-radius: 6px; padding: 6px;
+  border: 1px solid var(--gray-300); cursor:pointer; transition: all .15s; position:relative;
+}
+.cal-day:hover { border-color: var(--green-mid); box-shadow: var(--shadow); }
+.cal-day.empty { background: transparent; border-color: transparent; cursor:default; }
+.cal-day.empty:hover { box-shadow:none; }
+.cal-day.weekend { background: var(--gray-100); }
+.cal-day .day-num { font-size:12px; font-weight:700; color: var(--gray-700); }
+.cal-day .day-name { font-size:9px; color: var(--gray-500); }
+.cal-day.has-slot { border-color: var(--green-mid); background: var(--green-pale); }
+
+.slot-badge {
+  margin-top:4px; padding: 3px 6px; border-radius: 4px; font-size: 9px; font-weight:700;
+  line-height:1.2; display:block;
+}
+.slot-badge.lab { background: var(--blue); color: var(--white); }
+.slot-badge.form { background: var(--green-dark); color: var(--white); }
+.slot-badge .slot-hours { font-weight:400; opacity:.8; }
+
+/* MODAL */
+.modal-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background: var(--white); border-radius: 12px; width: 440px; max-width:90vw;
+  max-height:90vh; overflow-y:auto; box-shadow: var(--shadow-lg);
+}
+.modal-header {
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-300);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.modal-header h2 { font-size:16px; color: var(--green-dark); }
+.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color: var(--gray-500); padding:4px; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-300); display:flex; gap:8px; justify-content:flex-end; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display:block; font-size:12px; font-weight:700; color: var(--gray-700); margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+.form-group select, .form-group input {
+  width:100%; padding:10px 12px; border:1.5px solid var(--gray-300); border-radius:6px;
+  font-family: var(--font); font-size:14px; outline:none; transition: border-color .2s;
+}
+.form-group select:focus, .form-group input:focus { border-color: var(--green-mid); }
+
+.btn {
+  padding: 10px 20px; border-radius: 6px; font-family: var(--font); font-weight:700;
+  font-size:13px; cursor:pointer; border:none; transition: all .2s;
+}
+.btn-primary { background: var(--green-dark); color: var(--white); }
+.btn-primary:hover { background: var(--green-mid); }
+.btn-danger { background: var(--red); color: var(--white); }
+.btn-danger:hover { background: #b71c1c; }
+.btn-ghost { background:transparent; color: var(--gray-500); border:1.5px solid var(--gray-300); }
+.btn-ghost:hover { border-color: var(--gray-700); color: var(--gray-700); }
+
+/* BANDO VIEWER */
+.bando-section { padding:20px 24px; }
+.bando-frame { width:100%; height: calc(100vh - 140px); border:none; border-radius: var(--radius); box-shadow: var(--shadow); }
+
+/* RIEPILOGO */
+.riepilogo-section { padding: 20px 24px; }
+.slot-list { display:flex; flex-direction:column; gap:8px; }
+.slot-item {
+  display:grid; grid-template-columns: 100px 120px 1fr 60px 60px; gap:12px; align-items:center;
+  padding: 12px 16px; background: var(--white); border-radius: var(--radius); border: 1px solid var(--gray-300);
+  font-size:13px;
+}
+.slot-item .type-badge { padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700; color: var(--white); text-align:center; }
+.slot-item .type-badge.lab { background: var(--blue); }
+.slot-item .type-badge.form { background: var(--green-dark); }
+.slot-item .hours { font-weight:700; color: var(--green-dark); }
+.slot-item .delete-btn { background:none; border:none; color: var(--gray-500); cursor:pointer; font-size:16px; }
+.slot-item .delete-btn:hover { color: var(--red); }
+
+.progress-bar-container { margin: 16px 0; }
+.progress-label { display:flex; justify-content:space-between; font-size:12px; color: var(--gray-500); margin-bottom:4px; }
+.progress-bar { height:8px; background: var(--gray-300); border-radius:4px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:4px; transition: width .3s; }
+.progress-fill.perc { background: var(--green-dark); }
+.progress-fill.lab { background: var(--blue); }
+
+@media (max-width:768px) {
+  .cal-grid { grid-template-columns: repeat(7, 1fr); gap:2px; }
+  .cal-day { min-height:60px; padding:3px; }
+  .cal-day .day-num { font-size:10px; }
+  .slot-badge { font-size:7px; padding:2px 3px; }
+  .counters { grid-template-columns: repeat(2, 1fr); }
+  .slot-item { grid-template-columns: 1fr; }
+  .topbar h1 { font-size:14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>Intelligenze in dialogo</h1>
+    <p class="subtitle">Planner formativo PNRR — A.S. 2026/2027</p>
+    <input type="password" id="pwd-input" placeholder="Password di accesso" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">Accedi</button>
+    <p class="login-error" id="login-err">Password non corretta</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <h1>Intelligenze in dialogo</h1>
+    <div class="topbar-right">
+      <button class="tab-btn active" onclick="showTab('calendar')">Calendario</button>
+      <button class="tab-btn" onclick="showTab('riepilogo')">Riepilogo</button>
+      <button class="tab-btn" onclick="showTab('bando')">Bando PDF</button>
+    </div>
+  </div>
+
+  <!-- COUNTERS -->
+  <div class="counters" id="counters"></div>
+
+  <!-- CALENDAR TAB -->
+  <div id="tab-calendar" class="calendar-section"></div>
+
+  <!-- RIEPILOGO TAB -->
+  <div id="tab-riepilogo" class="riepilogo-section" style="display:none"></div>
+
+  <!-- BANDO TAB -->
+  <div id="tab-bando" class="bando-section" style="display:none">
+    <iframe class="bando-frame" id="bando-iframe" src=""></iframe>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Aggiungi attivita</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const PASSWORD_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // SHA-256 of "Forma2026" - we'll use simple check
+const BANDO_PDF_URL = 'Progetto.pdf'; // Place bando PDF in same folder on Neocities
+
+const BUDGET_TOTAL = 48182.40;
+const HOURS_PERCORSI_TOTAL = 108; // 18h x 6 edizioni
+const HOURS_LAB_TOTAL = 144; // 24h x 6 edizioni
+const HOURS_TOTAL = HOURS_PERCORSI_TOTAL + HOURS_LAB_TOTAL;
+const ATTESTATI_TARGET = 50;
+const EDIZIONI_PERCORSI = 6;
+const EDIZIONI_LAB = 6;
+
+// ===== STATE =====
+let slots = JSON.parse(localStorage.getItem('pnrr_slots') || '[]');
+
+// ===== LOGIN =====
+function doLogin() {
+  const pwd = document.getElementById('pwd-input').value;
+  if (pwd === 'Forma2026') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    sessionStorage.setItem('pnrr_auth','1');
+    renderAll();
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 2000);
+  }
+}
+if (sessionStorage.getItem('pnrr_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  setTimeout(renderAll, 50);
+}
+
+// ===== TABS =====
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-calendar').style.display = tab === 'calendar' ? 'block' : 'none';
+  document.getElementById('tab-riepilogo').style.display = tab === 'riepilogo' ? 'block' : 'none';
+  document.getElementById('tab-bando').style.display = tab === 'bando' ? 'block' : 'none';
+  if (tab === 'bando') {
+    document.getElementById('bando-iframe').src = BANDO_PDF_URL;
+  }
+  if (tab === 'riepilogo') renderRiepilogo();
+}
+
+// ===== HELPERS =====
+const DAYS_IT = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+const MONTHS_IT = ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+
+function dateKey(y,m,d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function slotsForDate(dk) { return slots.filter(s => s.date === dk); }
+function saveSlots() { localStorage.setItem('pnrr_slots', JSON.stringify(slots)); }
+
+function totalHoursUsed(type) {
+  return slots.filter(s => type ? s.type === type : true).reduce((a,s) => a + (parseFloat(s.hours)||0), 0);
+}
+
+// ===== GOOGLE SHEETS INTEGRATION =====
+// Replace with your Apps Script Web App URL
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTQS3CX68ltjxiW-K5sUeuhT_1c3WLU9aBIei2C-ov_ehf225Ye9WxLvc6tu-YaEqxrg/exec';
+
+function sendToSheets(slot) {
+  if (!SHEETS_URL) return;
+  const params = new URLSearchParams({
+    action: 'add',
+    date: slot.date,
+    type: slot.type,
+    subtype: slot.subtype || '',
+    hours: slot.hours,
+    classe: slot.classe || '',
+    docente: slot.docente || '',
+    tutor: slot.tutor || '',
+    note: slot.note || '',
+    timestamp: new Date().toISOString()
+  });
+  new Image().src = SHEETS_URL + '?' + params;
+}
+
+function deleteFromSheets(slot) {
+  if (!SHEETS_URL) return;
+  const params = new URLSearchParams({ action: 'delete', id: slot.id });
+  new Image().src = SHEETS_URL + '?' + params;
+}
+
+// ===== RENDER COUNTERS =====
+function renderCounters() {
+  const hPerc = totalHoursUsed('formazione');
+  const hLab = totalHoursUsed('laboratorio');
+  const hTot = hPerc + hLab;
+  const percRemain = HOURS_PERCORSI_TOTAL - hPerc;
+  const labRemain = HOURS_LAB_TOTAL - hLab;
+  const totRemain = HOURS_TOTAL - hTot;
+  const attestati = slots.length; // simplified: each slot session contributes
+
+  document.getElementById('counters').innerHTML = `
+    <div class="counter-card ${totRemain <= 0 ? '' : 'warn'}">
+      <div class="label">Ore totali</div>
+      <div class="value">${hTot}h / ${HOURS_TOTAL}h</div>
+      <div class="detail">${totRemain > 0 ? 'Mancano ' + totRemain + 'h' : 'Completato'}</div>
+    </div>
+    <div class="counter-card ${percRemain <= 0 ? '' : 'warn'}">
+      <div class="label">Percorsi formativi (A)</div>
+      <div class="value">${hPerc}h / ${HOURS_PERCORSI_TOTAL}h</div>
+      <div class="detail">${percRemain > 0 ? 'Mancano ' + percRemain + 'h' : 'Completato'}</div>
+    </div>
+    <div class="counter-card ${labRemain <= 0 ? '' : 'warn'}">
+      <div class="label">Laboratori studenti (B)</div>
+      <div class="value">${hLab}h / ${HOURS_LAB_TOTAL}h</div>
+      <div class="detail">${labRemain > 0 ? 'Mancano ' + labRemain + 'h' : 'Completato'}</div>
+    </div>
+    <div class="counter-card">
+      <div class="label">Sessioni pianificate</div>
+      <div class="value">${slots.length}</div>
+      <div class="detail">Budget: ${BUDGET_TOTAL.toLocaleString('it-IT',{style:'currency',currency:'EUR'})}</div>
+    </div>
+  `;
+}
+
+// ===== RENDER CALENDAR =====
+function renderCalendar() {
+  const container = document.getElementById('tab-calendar');
+  container.innerHTML = '';
+
+  const periods = [
+    { year: 2026, month: 6, startDay: 1, endDay: 30, label: 'Giugno 2026' },
+    { year: 2026, month: 9, startDay: 1, endDay: 11, label: 'Settembre 2026 (1-11)' },
+  ];
+
+  periods.forEach(p => {
+    const title = document.createElement('h3');
+    title.className = 'month-title';
+    title.textContent = p.label;
+    container.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'cal-grid';
+
+    // Headers
+    DAYS_IT.forEach(d => {
+      const h = document.createElement('div');
+      h.className = 'cal-header';
+      h.textContent = d;
+      grid.appendChild(h);
+    });
+
+    // First day of month
+    const firstDate = new Date(p.year, p.month - 1, p.startDay);
+    let startDow = firstDate.getDay(); // 0=Sun
+
+    // Empty cells before start
+    for (let i = 0; i < startDow; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'cal-day empty';
+      grid.appendChild(empty);
+    }
+
+    // Days
+    for (let d = p.startDay; d <= p.endDay; d++) {
+      const dt = new Date(p.year, p.month - 1, d);
+      const dow = dt.getDay();
+      const dk = dateKey(p.year, p.month, d);
+      const daySlots = slotsForDate(dk);
+
+      const cell = document.createElement('div');
+      cell.className = 'cal-day' + (dow === 0 || dow === 6 ? ' weekend' : '') + (daySlots.length > 0 ? ' has-slot' : '');
+
+      let inner = `<div class="day-num">${d}</div><div class="day-name">${DAYS_IT[dow]}</div>`;
+      daySlots.forEach(s => {
+        const cls = s.type === 'laboratorio' ? 'lab' : 'form';
+        const label = s.type === 'laboratorio' ? 'LAB' : 'FORM';
+        const sub = s.subtype ? ` ${s.subtype}` : '';
+        inner += `<span class="slot-badge ${cls}">${label}${sub} <span class="slot-hours">${s.hours}h</span></span>`;
+      });
+
+      cell.innerHTML = inner;
+      cell.onclick = () => openDayModal(dk, d, MONTHS_IT[p.month], p.year);
+      grid.appendChild(cell);
+    }
+
+    container.appendChild(grid);
+  });
+}
+
+// ===== MODAL =====
+function openDayModal(dk, day, monthName, year) {
+  const existing = slotsForDate(dk);
+  const modal = document.getElementById('modal-overlay');
+  document.getElementById('modal-title').textContent = `${day} ${monthName} ${year}`;
+
+  let html = '';
+
+  // Existing slots
+  if (existing.length > 0) {
+    html += '<div style="margin-bottom:16px;">';
+    existing.forEach((s, i) => {
+      const cls = s.type === 'laboratorio' ? 'lab' : 'form';
+      const label = s.type === 'laboratorio' ? 'Laboratorio studenti' : 'Formazione docenti';
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:${s.type==='laboratorio'?'var(--blue-light)':'var(--green-pale)'};border-radius:6px;margin-bottom:6px;font-size:13px;">
+        <div><strong>${label}</strong> — ${s.hours}h${s.subtype ? ' ('+s.subtype+')' : ''}${s.classe ? ' — '+s.classe : ''}</div>
+        <button onclick="deleteSlot('${s.id}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;" title="Elimina">&times;</button>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Add new slot form
+  html += `
+    <div class="form-group">
+      <label>Tipo attivita</label>
+      <select id="slot-type" onchange="toggleSubfields()">
+        <option value="">— Seleziona —</option>
+        <option value="laboratorio">Laboratorio studenti</option>
+        <option value="formazione">Formazione docenti</option>
+      </select>
+    </div>
+    <div id="subfields-lab" style="display:none">
+      <div class="form-group">
+        <label>Classe</label>
+        <input id="slot-classe" placeholder="es. 3A Secondaria">
+      </div>
+      <div class="form-group">
+        <label>Docente curricolare</label>
+        <input id="slot-docente" placeholder="es. Bonetti Laura">
+      </div>
+      <div class="form-group">
+        <label>Tutor</label>
+        <input id="slot-tutor" placeholder="es. Cerioli Andrea">
+      </div>
+    </div>
+    <div id="subfields-form" style="display:none">
+      <div class="form-group">
+        <label>Sede</label>
+        <select id="slot-sede">
+          <option value="OZ">Orzinuovi</option>
+          <option value="MT">Martinengo</option>
+          <option value="OZ+MT">Orzinuovi + Martinengo</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Durata (ore)</label>
+      <select id="slot-hours">
+        <option value="2">2 ore</option>
+        <option value="3" selected>3 ore</option>
+        <option value="4">4 ore</option>
+        <option value="5">5 ore</option>
+        <option value="6">6 ore</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Note</label>
+      <input id="slot-note" placeholder="Opzionale">
+    </div>
+  `;
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
+    <button class="btn btn-primary" onclick="addSlot('${dk}')">Aggiungi</button>
+  `;
+  modal.classList.add('show');
+}
+
+function toggleSubfields() {
+  const type = document.getElementById('slot-type').value;
+  document.getElementById('subfields-lab').style.display = type === 'laboratorio' ? 'block' : 'none';
+  document.getElementById('subfields-form').style.display = type === 'formazione' ? 'block' : 'none';
+}
+
+function addSlot(dk) {
+  const type = document.getElementById('slot-type').value;
+  if (!type) return;
+  const hours = document.getElementById('slot-hours').value;
+  const note = document.getElementById('slot-note').value;
+
+  const slot = {
+    id: 'S' + Date.now() + Math.random().toString(36).slice(2,6),
+    date: dk,
+    type: type,
+    hours: parseFloat(hours),
+    note: note,
+  };
+
+  if (type === 'laboratorio') {
+    slot.classe = document.getElementById('slot-classe').value;
+    slot.docente = document.getElementById('slot-docente').value;
+    slot.tutor = document.getElementById('slot-tutor').value;
+  } else {
+    slot.subtype = document.getElementById('slot-sede').value;
+  }
+
+  slots.push(slot);
+  saveSlots();
+  sendToSheets(slot);
+  closeModal();
+  renderAll();
+}
+
+function deleteSlot(id) {
+  const slot = slots.find(s => s.id === id);
+  slots = slots.filter(s => s.id !== id);
+  saveSlots();
+  if (slot) deleteFromSheets(slot);
+  closeModal();
+  renderAll();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// ===== RIEPILOGO =====
+function renderRiepilogo() {
+  const container = document.getElementById('tab-riepilogo');
+  const hPerc = totalHoursUsed('formazione');
+  const hLab = totalHoursUsed('laboratorio');
+  const hTot = hPerc + hLab;
+
+  const pctPerc = Math.min(100, (hPerc / HOURS_PERCORSI_TOTAL * 100));
+  const pctLab = Math.min(100, (hLab / HOURS_LAB_TOTAL * 100));
+  const pctTot = Math.min(100, (hTot / HOURS_TOTAL * 100));
+
+  let html = `
+    <h3 class="month-title">Avanzamento progetto</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div>
+        <div class="progress-bar-container">
+          <div class="progress-label"><span>Ore totali</span><span>${hTot}h / ${HOURS_TOTAL}h (${pctTot.toFixed(1)}%)</span></div>
+          <div class="progress-bar"><div class="progress-fill perc" style="width:${pctTot}%"></div></div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-label"><span>Percorsi (A)</span><span>${hPerc}h / ${HOURS_PERCORSI_TOTAL}h</span></div>
+          <div class="progress-bar"><div class="progress-fill perc" style="width:${pctPerc}%"></div></div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-label"><span>Laboratori (B)</span><span>${hLab}h / ${HOURS_LAB_TOTAL}h</span></div>
+          <div class="progress-bar"><div class="progress-fill lab" style="width:${pctLab}%"></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="padding:16px;background:var(--green-pale);border-radius:var(--radius);font-size:13px;">
+          <strong>Budget:</strong> ${BUDGET_TOTAL.toLocaleString('it-IT',{style:'currency',currency:'EUR'})}<br>
+          <strong>Codice progetto:</strong> M4C1I2.1-2026-1765-P-66832<br>
+          <strong>CUP:</strong> F54D25009320006<br>
+          <strong>Partner:</strong> Impara Digitale<br>
+          <strong>Scadenza:</strong> 31/12/2026<br>
+          <strong>Target attestati:</strong> ${ATTESTATI_TARGET}
+        </div>
+      </div>
+    </div>
+
+    <h3 class="month-title">Tutte le sessioni pianificate</h3>
+  `;
+
+  // Sort by date
+  const sorted = [...slots].sort((a,b) => a.date.localeCompare(b.date));
+
+  if (sorted.length === 0) {
+    html += '<p style="color:var(--gray-500);font-size:14px;">Nessuna sessione pianificata. Clicca su un giorno del calendario per aggiungerne una.</p>';
+  } else {
+    html += '<div class="slot-list">';
+    sorted.forEach(s => {
+      const parts = s.date.split('-');
+      const dt = new Date(+parts[0], +parts[1]-1, +parts[2]);
+      const dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+      const dayName = DAYS_IT[dt.getDay()];
+      const cls = s.type === 'laboratorio' ? 'lab' : 'form';
+      const label = s.type === 'laboratorio' ? 'LAB' : 'FORM';
+      let info = '';
+      if (s.type === 'laboratorio') {
+        info = [s.classe, s.docente, s.tutor].filter(Boolean).join(' — ') || 'Dettagli da definire';
+      } else {
+        info = s.subtype || '';
+      }
+
+      html += `<div class="slot-item">
+        <div><strong>${dateStr}</strong><br><span style="color:var(--gray-500);font-size:11px;">${dayName}</span></div>
+        <div><span class="type-badge ${cls}">${label}</span></div>
+        <div>${info}${s.note ? '<br><span style="font-size:11px;color:var(--gray-500);">'+s.note+'</span>' : ''}</div>
+        <div class="hours">${s.hours}h</div>
+        <div><button class="delete-btn" onclick="deleteSlot('${s.id}');renderRiepilogo();" title="Elimina">&times;</button></div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+// ===== RENDER ALL =====
+function renderAll() {
+  renderCounters();
+  renderCalendar();
+}
+
+// Close modal on overlay click
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
